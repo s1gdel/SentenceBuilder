@@ -32,7 +32,7 @@ The main source packages are:
 
 ```
 src/main/java/com/example/sentencebuilder/
-├── ui/       → JavaFX controllers and user-interface behavior
+├── ui/       → JavaFX controllers, background UI tasks, user-interface behavior
 ├── logic/    → Word/sentence models, vocabulary, tokenization,
 │               sentence generation, import analysis, application controller
 └── data/     → Database access layer (currently a repository placeholder)
@@ -42,11 +42,11 @@ src/main/resources/
 └── database/schema.sql          → Initial MySQL/MariaDB schema
 ```
 
-The UI should communicate with the business-logic layer instead of directly accessing the database. Database and other technical-service operations remain separated from JavaFX code.
+The UI communicates with the logic layer instead of directly accessing the database. Database and other technical-service operations remain separated from JavaFX code.
 
 ## Current progress
 
-The project is still in development, but the initial scaffold has expanded beyond the starter JavaFX application.
+The project is still in development, but the initial scaffold now includes a first usable file-analysis interface.
 
 ### Completed groundwork
 
@@ -58,7 +58,7 @@ The project is still in development, but the initial scaffold has expanded beyon
   - imported files
   - generated sentences
 - Plain-text file validation through `ImportFileValidator`.
-- File-analysis groundwork through `TextFileAnalyzer` and `ImportSummary`, including line/token counts, progress callbacks, and cancellation support.
+- File-analysis logic through `TextFileAnalyzer` and `ImportSummary`, including line/token counts, progress callbacks, and cancellation support.
 - First-pass tokenization through `ImportTokenizer`.
 - In-memory business-logic models:
   - `Word`
@@ -66,17 +66,24 @@ The project is still in development, but the initial scaffold has expanded beyon
   - `Vocabulary`
 - `ApplicationController` to keep the UI decoupled from business logic.
 - Early `SentenceGenerator` implementation that can start with a known word and append its most common learned follower.
+- Basic JavaFX file-analysis screen with:
+  - text-file selection
+  - file validation
+  - background processing
+  - progress/status updates
+  - cancellation
+  - simple success/error feedback
 
 ### Still to be implemented or integrated
 
 - JDBC/MySQL repository implementation and database CRUD wiring.
-- Connecting text parsing/import results to persistent database storage.
-- Full JavaFX screens and event handling for project features.
+- Connecting analyzed/imported text to the tokenizer, vocabulary, and persistent database storage.
+- Additional JavaFX screens and event handling for generation, auto-complete, reports, and word management.
 - Complete sentence-generation algorithms, including weighted/probability-based selection.
 - Auto-complete behavior.
 - Word-data viewing/editing and reporting features.
 - Generated-sentence history integration.
-- Full testing, integration, and final UI/UX polish.
+- Broader automated testing and final UI/UX polish.
 
 ## Getting started
 
@@ -92,13 +99,13 @@ The project is still in development, but the initial scaffold has expanded beyon
 
 4. Use JDK 17 or newer.
 
-5. Run `HelloApplication.java` to confirm the current JavaFX scaffold works.
+5. Run `HelloApplication.java`.
 
-The application is still under active development, so the current Hello screen is only a project scaffold and not the final interface.
+The current interface can select and analyze a plain-text file, but it does not yet write the analyzed data to MySQL.
 
 ## Contributing
 
-- Work on a feature branch instead of directly on `main`.
+- Work on a feature branch instead of directly on `main` when possible.
 - Pull the latest changes before starting new work.
 - Open a pull request for review before merging.
 - Keep UI, business logic, and technical-service/database responsibilities separated.
@@ -107,4 +114,4 @@ The application is still under active development, so the current Hello screen i
 
 ## Status
 
-In progress: The project scaffold and layer structure set up. Database schema, sentence generation, and UI still to come.
+In progress: file validation/analysis, initial business logic, database schema, and a first responsive JavaFX file-analysis screen are present; database persistence and the remaining application features are still under development.

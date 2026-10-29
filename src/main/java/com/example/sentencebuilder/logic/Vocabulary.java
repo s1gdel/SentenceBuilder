@@ -20,32 +20,40 @@ public class Vocabulary {
     private final Map<String, Word> wordsByText = new HashMap<>();
     private final Map<String, Map<String, Integer>> followerCounts = new HashMap<>();
 
+    /** Last word of the sentence still in progress, or null at a sentence boundary. */
+    private Word previousWord;
+
     /**
      * Updates word and follower statistics from one line of imported text.
      *
-     * @param line one line from a source file; blank lines are ignored
+     * <p>A sentence ends at a period, question mark, or exclamation mark, not at the
+     * end of a line. A sentence that wraps onto the next line keeps going, and one line
+     * may hold several sentences. A blank line also ends the current sentence.
+     *
+     * @param line one line from a source file; blank lines end the current sentence
      */
     public void learnFromLine(String line) {
         Objects.requireNonNull(line, "line");
-        List<String> tokens = ImportTokenizer.tokenizeLine(line);
+        List<ImportTokenizer.SentenceToken> tokens = ImportTokenizer.tokenizeWithBoundaries(line);
         if (tokens.isEmpty()) {
+            previousWord = null;
             return;
         }
 
-        Word previousWord = null;
-        for (int tokenIndex = 0; tokenIndex < tokens.size(); tokenIndex++) {
-            Word currentWord = getOrCreateWord(tokens.get(tokenIndex));
+        for (ImportTokenizer.SentenceToken token : tokens) {
+            Word currentWord = getOrCreateWord(token.text());
             currentWord.recordOccurrence();
-            if (tokenIndex == 0) {
+            if (previousWord == null) {
                 currentWord.recordSentenceStart();
-            }
-            if (tokenIndex == tokens.size() - 1) {
-                currentWord.recordSentenceEnd();
-            }
-            if (previousWord != null) {
+            } else {
                 recordFollower(previousWord.getText(), currentWord.getText());
             }
-            previousWord = currentWord;
+            if (token.endsSentence()) {
+                currentWord.recordSentenceEnd();
+                previousWord = null;
+            } else {
+                previousWord = currentWord;
+            }
         }
     }
 
@@ -127,7 +135,10 @@ public class Vocabulary {
      */
     public void learnFromSentence(Sentence sentence) {
         Objects.requireNonNull(sentence, "sentence");
-        learnFromLine(sentence.asText());
+        // Generated text has no punctuation, so end it explicitly and keep it separate
+        // from whatever sentence was in progress.
+        previousWord = null;
+        learnFromLine(sentence.asText() + ".");
     }
 
     /**

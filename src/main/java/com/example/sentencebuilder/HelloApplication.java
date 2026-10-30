@@ -46,12 +46,29 @@ public class HelloApplication extends Application {
         Tab generateTab = new Tab("Generate", generateLoader.load());
         generateTab.setClosable(false);
 
-        // FXML creates each screen's controller itself, so hand them the logic controller afterward.
+        TabPane tabs = new TabPane(importTab, generateTab);
+
+        // FXML creates each screen's controller itself, so hand them the shared
+        // application controller afterward.
         ImportController importController = importLoader.getController();
         importController.setApplicationController(applicationController);
 
         GenerateController generateController = generateLoader.getController();
         generateController.setApplicationController(applicationController);
+
+        // Generation is available only when the application has vocabulary data.
+        generateTab.setDisable(applicationController.getKnownWordCount() == 0);
+
+        // A successful import immediately refreshes the next screen and moves the
+        // user forward instead of requiring a manual refresh or extra navigation.
+        importController.setOnImportCompleted(() -> {
+            generateController.refresh();
+            generateTab.setDisable(applicationController.getKnownWordCount() == 0);
+            if (!generateTab.isDisable()) {
+                tabs.getSelectionModel().select(generateTab);
+            }
+        });
+
         // A file may have been imported since the tab was last shown.
         generateTab.setOnSelectionChanged(event -> {
             if (generateTab.isSelected()) {
@@ -59,7 +76,6 @@ public class HelloApplication extends Application {
             }
         });
 
-        TabPane tabs = new TabPane(importTab, generateTab);
         Scene scene = new Scene(tabs, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         stage.setTitle("Sentence Builder");

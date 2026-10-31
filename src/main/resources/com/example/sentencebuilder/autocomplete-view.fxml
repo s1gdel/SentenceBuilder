@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_LEFT"
+      spacing="12.0"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.sentencebuilder.ui.AutocompleteController">
+    <padding>
+        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+    </padding>
+
+    <Label text="Auto-complete"
+           style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+    <Label text="Suggestions appear only after a complete word followed by a space, period, or comma."
+           wrapText="true"/>
+    <Label fx:id="vocabularyLabel" wrapText="true"/>
+
+    <Label text="Sentence text" style="-fx-font-weight: bold;"/>
+    <TextArea fx:id="sentenceArea"
+              promptText="Start typing here..."
+              wrapText="true"
+              prefRowCount="6"
+              VBox.vgrow="ALWAYS"/>
+
+    <Label text="Next-word suggestions" style="-fx-font-weight: bold;"/>
+    <ListView fx:id="suggestionList" prefHeight="160.0"/>
+
+    <HBox alignment="CENTER_LEFT" spacing="8.0">
+        <Button fx:id="useSuggestionButton"
+                text="_Use Selected Word"
+                mnemonicParsing="true"
+                onAction="#onUseSuggestion"/>
+    </HBox>
+
+    <Label fx:id="statusLabel" wrapText="true"/>
+</VBox>

@@ -2,6 +2,7 @@ package com.example.sentencebuilder.ui;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import com.example.sentencebuilder.logic.ApplicationController;
 import com.example.sentencebuilder.logic.ImportFileValidator;
@@ -48,6 +49,7 @@ public class ImportController {
 
     private TextImportTask activeTask;
     private ApplicationController applicationController;
+    private Runnable onImportCompleted = () -> { };
 
     /**
      * Receives the business-logic controller from the application startup code.
@@ -57,6 +59,17 @@ public class ImportController {
      */
     public void setApplicationController(ApplicationController applicationController) {
         this.applicationController = applicationController;
+    }
+
+    /**
+     * Registers a UI callback that runs after a file has been imported successfully.
+     * This keeps cross-screen navigation in the application shell instead of
+     * coupling this controller directly to another JavaFX screen.
+     *
+     * @param onImportCompleted action to run after a successful import
+     */
+    public void setOnImportCompleted(Runnable onImportCompleted) {
+        this.onImportCompleted = Objects.requireNonNull(onImportCompleted, "onImportCompleted");
     }
 
     /**
@@ -70,7 +83,7 @@ public class ImportController {
         progressBar.setProgress(0);
         cancelButton.setDisable(true);
         statusLabel.setText("Ready.");
-        summaryArea.setText("Choose a plain-text file to analyze.");
+        summaryArea.setText("Choose a plain-text file to import.");
         refreshValidation();
     }
 
@@ -119,8 +132,9 @@ public class ImportController {
             ImportSummary summary = task.getValue();
             finishTask();
             progressBar.setProgress(1);
-            statusLabel.setText("Finished processing " + summary.sourceFile().getFileName() + ".");
+            statusLabel.setText("Imported " + summary.sourceFile().getFileName() + ".");
             summaryArea.setText(formatSummary(summary));
+            onImportCompleted.run();
         });
 
         task.setOnFailed(event -> {

@@ -19,7 +19,7 @@
 
     <Label text="Sentence Builder"
            style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
-    <Label text="Select a plain-text file to validate and analyze before database integration."
+    <Label text="Select a plain-text file to import into the Sentence Builder vocabulary."
            wrapText="true"/>
 
     <HBox alignment="CENTER_LEFT" spacing="8.0">
@@ -37,7 +37,7 @@
 
     <HBox alignment="CENTER_LEFT" spacing="8.0">
         <Button fx:id="analyzeButton"
-                text="_Analyze File"
+                text="_Import File"
                 mnemonicParsing="true"
                 defaultButton="true"
                 onAction="#onAnalyzeFile"/>
@@ -51,7 +51,7 @@
     </HBox>
 
     <Label fx:id="statusLabel" wrapText="true"/>
-    <Label text="Analysis summary" style="-fx-font-weight: bold;"/>
+    <Label text="Import summary" style="-fx-font-weight: bold;"/>
     <TextArea fx:id="summaryArea"
               editable="false"
               focusTraversable="false"

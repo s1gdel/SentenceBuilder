@@ -46,7 +46,7 @@ The UI communicates with the logic layer instead of directly accessing the datab
 
 ## Current progress
 
-The project is still in development, but the import screen, business-logic controller, vocabulary logic, and generation logic are now beginning to operate as one flow.
+The project is still in development, and the import, generation, and early auto-complete screens now operate through the same shared business-logic controller.
 
 ### Completed groundwork
 
@@ -62,6 +62,14 @@ The project is still in development, but the import screen, business-logic contr
 - Sentence generation supports weighted-random and most-common follower selection with configurable maximum length.
 - Business logic can rank next-word suggestions from learned follower counts.
 - Generated sentences are tracked in memory for later duplicate/history integration.
+- Import and generation are presented as coordinated JavaFX tabs that share application state.
+- Generation controls stay unavailable until vocabulary data exists, and a successful import refreshes and opens the Generate tab.
+- Initial auto-complete UI:
+  - becomes available after text has been imported
+  - requests next-word suggestions only after space, period, or comma
+  - shows ranked follower choices from the shared vocabulary
+  - lets the user insert a suggestion or type a different next word
+  - records selected/typed follower choices through `ApplicationController.recordSuggestionChoice(...)`
 - Basic JavaFX file-analysis screen includes:
   - text-file selection
   - file validation
@@ -76,10 +84,11 @@ The project is still in development, but the import screen, business-logic contr
 - JDBC/MySQL implementation of `VocabularyRepository` / database CRUD wiring.
 - Loading persisted vocabulary at application startup.
 - Persisting imported-file metadata and learned word/follower statistics.
-- JavaFX screens/event handling for generation, auto-complete, reports, and word management.
-- Recording autocomplete user choices in memory and persistent storage.
+- JavaFX screens/event handling for reports and word management.
+- Complete auto-complete UX/polish and persistence through the future JDBC repository.
 - Persisting generated-sentence history and duplicate-reporting data.
-- Broader automated testing and final UI/UX polish.
+- Additional automated testing around database persistence and the remaining application flows.
+- Final UI/UX polish.
 
 ## Getting started
 
@@ -110,4 +119,4 @@ The current interface can select and process a plain-text file into the applicat
 
 ## Status
 
-In progress: file processing now flows through the shared application controller into the in-memory vocabulary; generation/suggestion logic and database contracts are present, while JDBC persistence and the remaining JavaFX features are still under development.
+In progress: file processing flows through the shared application controller, Import/Generate are integrated, and an initial event-driven auto-complete screen now uses the existing suggestion and user-choice logic. Integration tests cover imports, cancellation safety, suggestion ranking, and manual next-word choices. JDBC persistence and the remaining JavaFX features are still under development.

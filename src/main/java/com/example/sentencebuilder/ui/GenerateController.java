@@ -93,12 +93,28 @@ public class GenerateController {
     public void refresh() {
         if (applicationController == null) {
             vocabularyLabel.setText("Application services are unavailable.");
+            setGenerationControlsDisabled(true);
             return;
         }
+
         int wordCount = applicationController.getKnownWordCount();
-        vocabularyLabel.setText(wordCount == 0
+        boolean noVocabulary = wordCount == 0;
+        vocabularyLabel.setText(noVocabulary
                 ? "No words learned yet. Import a text file on the Import tab first."
                 : "Known words: " + String.format("%,d", wordCount));
+        setGenerationControlsDisabled(noVocabulary);
+    }
+
+    /**
+     * Keeps actions unavailable until the application has enough data to perform them.
+     *
+     * @param disabled true when sentence generation should not be available
+     */
+    private void setGenerationControlsDisabled(boolean disabled) {
+        startWordField.setDisable(disabled);
+        methodChoice.setDisable(disabled);
+        maxWordsSpinner.setDisable(disabled);
+        generateButton.setDisable(disabled);
     }
 
     /**

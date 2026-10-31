@@ -1,6 +1,7 @@
 package com.example.sentencebuilder;
 
 import com.example.sentencebuilder.logic.ApplicationController;
+import com.example.sentencebuilder.ui.AutocompleteController;
 import com.example.sentencebuilder.ui.GenerateController;
 import com.example.sentencebuilder.ui.ImportController;
 import javafx.application.Application;
@@ -13,7 +14,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- * Starts the JavaFX application and displays the Sentence Builder screens (Import and Generate tabs).
+ * Starts the JavaFX application and displays the Sentence Builder screens.
  *
  * <p>This class is the one place where the layers are assembled: it builds the
  * ApplicationController and hands it to the screen, so the UI never creates
@@ -46,12 +47,44 @@ public class HelloApplication extends Application {
         Tab generateTab = new Tab("Generate", generateLoader.load());
         generateTab.setClosable(false);
 
-        // FXML creates each screen's controller itself, so hand them the logic controller afterward.
+        FXMLLoader autocompleteLoader = new FXMLLoader(
+                HelloApplication.class.getResource("autocomplete-view.fxml"));
+        Tab autocompleteTab = new Tab("Auto-complete", autocompleteLoader.load());
+        autocompleteTab.setClosable(false);
+
+        TabPane tabs = new TabPane(importTab, generateTab, autocompleteTab);
+
+        // FXML creates each screen's controller itself, so hand them the shared
+        // application controller afterward.
         ImportController importController = importLoader.getController();
         importController.setApplicationController(applicationController);
 
         GenerateController generateController = generateLoader.getController();
         generateController.setApplicationController(applicationController);
+
+        AutocompleteController autocompleteController = autocompleteLoader.getController();
+        autocompleteController.setApplicationController(applicationController);
+
+        // Features that depend on learned words stay unavailable until vocabulary exists.
+        boolean noVocabulary = applicationController.getKnownWordCount() == 0;
+        generateTab.setDisable(noVocabulary);
+        autocompleteTab.setDisable(noVocabulary);
+
+        // A successful import immediately refreshes the next screen and moves the
+        // user forward instead of requiring a manual refresh or extra navigation.
+        importController.setOnImportCompleted(() -> {
+            generateController.refresh();
+            autocompleteController.refresh();
+
+            boolean vocabularyEmpty = applicationController.getKnownWordCount() == 0;
+            generateTab.setDisable(vocabularyEmpty);
+            autocompleteTab.setDisable(vocabularyEmpty);
+
+            if (!generateTab.isDisable()) {
+                tabs.getSelectionModel().select(generateTab);
+            }
+        });
+
         // A file may have been imported since the tab was last shown.
         generateTab.setOnSelectionChanged(event -> {
             if (generateTab.isSelected()) {
@@ -59,7 +92,12 @@ public class HelloApplication extends Application {
             }
         });
 
-        TabPane tabs = new TabPane(importTab, generateTab);
+        autocompleteTab.setOnSelectionChanged(event -> {
+            if (autocompleteTab.isSelected()) {
+                autocompleteController.refresh();
+            }
+        });
+
         Scene scene = new Scene(tabs, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         stage.setTitle("Sentence Builder");

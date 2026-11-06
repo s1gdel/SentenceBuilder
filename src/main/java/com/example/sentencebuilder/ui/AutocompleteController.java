@@ -18,19 +18,20 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 
 /**
- * Provides next-word autocomplete through JavaFX without duplicating word logic.
+ * I provide next-word autocomplete through JavaFX without duplicating business logic.
  *
- * <p>After a user completes a word with a space, period, or comma, this screen
- * asks the shared application controller for ranked follower suggestions. If a
- * manually entered word is unknown, it asks permission before learning it.
+ * <p>I wait for a completed word (space, period, or comma), then request ranked
+ * follower suggestions from the shared application controller. When I detect
+ * an unfamiliar typed word, I ask the user before learning it.
  *
  * <p>Sentence Builder, CS4485.0W1 Senior Design, Team 25.
- * UI implementation by Jinesh Patel, started October 30, 2026.
- * NetID: JAP220022.
- * Unknown-word confirmation added November 6, 2026.
+ * I, Jinesh Patel (NetID: JAP220022), started this UI on October 30, 2026.
+ * I added unknown-word confirmation on November 6, 2026.
+ * AI prompt: Build a JavaFX autocomplete tab using the existing next-word
+ * suggestions and record confirmed user choices after completed words.
  */
 public class AutocompleteController {
-    /** Limit the list to a useful size without overwhelming the text editor. */
+    /** I limit the suggestions to avoid overwhelming the text editor. */
     private static final int MAX_SUGGESTIONS = 5;
 
     @FXML private Label vocabularyLabel;
@@ -39,17 +40,17 @@ public class AutocompleteController {
     @FXML private Button useSuggestionButton;
     @FXML private Label statusLabel;
 
-    /** Shared application logic is injected by startup, never created by this UI. */
+    /** I receive shared application logic from startup rather than creating it here. */
     private ApplicationController applicationController;
 
-    /** Keep the model objects aligned with the displayed strings by list index. */
+    /** I keep each suggestion model aligned with its displayed list index. */
     private List<WordSuggestion> currentSuggestions = List.of();
 
-    /** Ignore changes caused by inserting a selected suggestion programmatically. */
+    /** I ignore text events triggered when I insert a selected suggestion. */
     private boolean suppressTextEvents;
 
     /**
-     * Makes the shared vocabulary and suggestion service available to this screen.
+     * I connect the shared vocabulary and suggestion service to this screen.
      *
      * @param applicationController logic layer used by Import/Generate/Autocomplete
      */
@@ -60,8 +61,8 @@ public class AutocompleteController {
     }
 
     /**
-     * Subscribes to editor and selection changes and sets initial control states.
-     * Listening for completed tokens avoids guessing a word mid-typing.
+     * I subscribe to editor and selection changes, and initialize control states.
+     * I listen for completed words instead of guessing in the middle of typing.
      */
     @FXML
     public void initialize() {
@@ -76,8 +77,8 @@ public class AutocompleteController {
     }
 
     /**
-     * Updates availability and suggestions after an import or tab switch.
-     * The editor is unavailable if no vocabulary data exists yet.
+     * I refresh availability and suggestions after imports or tab changes.
+     * I disable the editor when no vocabulary is available.
      */
     public void refresh() {
         if (applicationController == null) {
@@ -106,8 +107,8 @@ public class AutocompleteController {
     }
 
     /**
-     * Applies the selected known follower and sends the choice to the logic layer.
-     * Internal text changes are suppressed to avoid recording a second choice.
+     * I insert the selected follower and record the choice through shared logic.
+     * I suppress my own text changes to avoid counting the same choice twice.
      */
     @FXML
     protected void onUseSuggestion() {
@@ -130,8 +131,8 @@ public class AutocompleteController {
         String previousWord = words.get(words.size() - 1);
         String selectedWord = currentSuggestions.get(index).wordText();
 
-        // A selected suggestion always follows the completed word on which the
-        // suggestion list was based; recording keeps its ranking up to date.
+        // I record the selected follower of the last completed word so the
+        // next-word ranking can learn from this choice.
         try {
             applicationController.recordSuggestionChoice(previousWord, selectedWord);
         } catch (StorageException exception) {
@@ -158,9 +159,8 @@ public class AutocompleteController {
     }
 
     /**
-     * Handles a completed user-typed word. Unknown words require confirmation,
-     * including when that word is the first one in the editor. No response or a
-     * No response leaves the vocabulary unchanged.
+     * I handle each newly completed typed word, including the first word.
+     * I ask before adding an unknown word; No or dismissal causes no write.
      *
      * @param oldText content before the user edit
      * @param newText content after the user edit
@@ -177,8 +177,8 @@ public class AutocompleteController {
             return;
         }
 
-        // This initial UI supports normal typing at the end of the text area.
-        // Editing earlier text does not silently replay old learning events.
+        // I process append-only typing for now. If a user rewrites earlier
+        // text, I avoid replaying old learning events as new word choices.
         if (!newText.startsWith(oldText)) {
             clearSuggestions();
             return;
@@ -196,7 +196,7 @@ public class AutocompleteController {
 
         String completedWord = words.get(words.size() - 1);
 
-        // Extra whitespace/punctuation after a delimiter is not another word.
+        // I do not count extra whitespace or punctuation as another word.
         if (endsWithCompletionDelimiter(oldText)) {
             showSuggestions(completedWord);
             return;
@@ -214,12 +214,12 @@ public class AutocompleteController {
 
         try {
             if (previousWord != null && applicationController.isKnownWord(previousWord)) {
-                // This records either a known manually typed follower or an
-                // unfamiliar word that the user explicitly approved.
+                // I record an existing word or a new follower that the user
+                // explicitly approved in the confirmation dialog.
                 applicationController.recordSuggestionChoice(previousWord, completedWord);
             } else if (!knownWord) {
-                // The first word (or a word after a declined unknown word) has
-                // no valid previous follower; save it without inventing a pair.
+                // I save a confirmed first word without inventing a follower
+                // link when there is no valid previous word.
                 applicationController.addUserWord(completedWord);
             }
         } catch (StorageException exception) {
@@ -232,8 +232,10 @@ public class AutocompleteController {
     }
 
     /**
-     * Gives the user control before adding any unfamiliar word to storage.
-     * The dialog defaults to No so dismissing it does not approve a new word.
+     * I request confirmation before an unfamiliar word is added to storage.
+     * I use No as the default so dismissing the dialog does not approve it.
+     * AI prompt: Ask Yes or No when autocomplete encounters an unknown word,
+     * and add the word only when the user explicitly agrees.
      *
      * @param wordText unfamiliar normalized word
      * @return true only when the user explicitly chooses Yes
@@ -252,7 +254,7 @@ public class AutocompleteController {
     }
 
     /**
-     * Refreshes suggestions for the latest completed word when this tab is opened.
+     * I refresh suggestions for the latest completed word when this tab opens.
      */
     private void showSuggestionsForLastCompletedWord() {
         List<String> words = completedWords(sentenceArea.getText());
@@ -264,8 +266,8 @@ public class AutocompleteController {
     }
 
     /**
-     * Displays a ranked list supplied by business logic and clears the previous
-     * selection so the button cannot apply a stale suggestion.
+     * I display the ranked followers supplied by shared logic and clear the
+     * previous selection so a stale suggestion cannot be applied.
      *
      * @param previousWord normalized completed word
      */
@@ -290,8 +292,8 @@ public class AutocompleteController {
     }
 
     /**
-     * Normalizes words using the project's existing import rules. Separating at
-     * commas and periods agrees with the keys used for autocomplete completion.
+     * I normalize words with the project's existing import rules. I treat
+     * commas and periods as word separators for autocomplete completion.
      *
      * @param text editor content
      * @return normalized word tokens, in reading order
@@ -301,7 +303,7 @@ public class AutocompleteController {
     }
 
     /**
-     * Recognizes exactly the three completion keys specified for the UI.
+     * I recognize only space, period, and comma as completion keys.
      *
      * @param text current editor text
      * @return whether the last character is a completion delimiter
@@ -315,7 +317,7 @@ public class AutocompleteController {
     }
 
     /**
-     * Removes stale choices when the input no longer ends at a completed word.
+     * I clear stale choices when the input no longer ends at a completed word.
      */
     private void clearSuggestions() {
         currentSuggestions = List.of();
@@ -324,7 +326,7 @@ public class AutocompleteController {
     }
 
     /**
-     * Disables dependent controls until a vocabulary has been imported or loaded.
+     * I disable dependent controls until vocabulary has been imported or loaded.
      *
      * @param disabled true when there are no words to offer
      */

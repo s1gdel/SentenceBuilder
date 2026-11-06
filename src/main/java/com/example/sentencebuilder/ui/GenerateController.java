@@ -107,9 +107,10 @@ public class GenerateController {
     }
 
     /**
-     * Keeps actions unavailable until the application has enough data to perform them.
-     * Empty-vocabulary UX handling was integrated by Jinesh Patel on
-     * October 30, 2026; sentence-generation algorithms remain unchanged.
+     * I disable generation controls until the application has usable vocabulary.
+     * I, Jinesh Patel, added the empty-vocabulary UI guard on October 30,
+     * 2026 without changing the team's sentence-generation algorithms.
+     * AI prompt: Disable generation controls until imported vocabulary exists.
      *
      * @param disabled true when sentence generation should not be available
      */

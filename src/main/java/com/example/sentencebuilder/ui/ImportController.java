@@ -17,14 +17,15 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
 /**
- * Handles input validation, background file import, progress, cancellation,
- * and results for the Sentence Builder Import tab. A JavaFX Task performs file
- * and repository work so user input and rendering remain responsive.
+ * I handle file validation, import progress, cancellation, and results for
+ * Sentence Builder's Import tab. I delegate file reads and repository work
+ * to a JavaFX Task so the interface stays responsive.
  *
- * <p>Written by Jinesh Patel for CS4485.0W1 Senior Design, Team 25,
- * starting October 9, 2026. NetID: JAP220022.
- * Vocabulary integration revised October 16 and 23, 2026; cross-screen
- * coordination added October 30, 2026.
+ * <p>I, Jinesh Patel (NetID: JAP220022), started this module on October 9,
+ * 2026 for CS4485.0W1 Senior Design, Team 25. I integrated vocabulary on
+ * October 16 and 23, and coordinated the screens on October 30, 2026.
+ * AI prompt: Create a JavaFX text-file import screen with validation,
+ * cancellation, background progress, status messages, and result summaries.
  */
 public class ImportController {
     private static final String WORKER_THREAD_NAME = "sentence-builder-file-import";
@@ -53,15 +54,15 @@ public class ImportController {
     @FXML
     private TextArea summaryArea;
 
-    /** Non-null during a running task, preventing overlapping imports. */
+    /** I retain the active task to prevent overlapping imports. */
     private TextImportTask activeTask;
-    /** Shared application logic supplied by startup. */
+    /** I receive shared application logic from startup. */
     private ApplicationController applicationController;
-    /** UI callback for tab navigation without depending on another screen. */
+    /** I notify the app shell without depending on another screen's controller. */
     private Runnable onImportCompleted = () -> { };
 
     /**
-     * Receives the business-logic controller from the application startup code.
+     * I receive the shared business-logic controller from application startup.
      *
      * @param applicationController controller this screen should call instead of
      *                              reading files or touching storage itself
@@ -71,9 +72,8 @@ public class ImportController {
     }
 
     /**
-     * Registers a UI callback that runs after a file has been imported successfully.
-     * This keeps cross-screen navigation in the application shell instead of
-     * coupling this controller directly to another JavaFX screen.
+     * I register a callback to notify the application shell after an import.
+     * I leave cross-screen navigation in the shell to avoid tight coupling.
      *
      * @param onImportCompleted action to run after a successful import
      */
@@ -82,7 +82,7 @@ public class ImportController {
     }
 
     /**
-     * Sets the initial control state and watches the path field for validation changes.
+     * I initialize control states and watch the file path for validation changes.
      */
     @FXML
     public void initialize() {
@@ -97,7 +97,7 @@ public class ImportController {
     }
 
     /**
-     * Opens a file chooser when the user presses Browse.
+     * I open a file chooser when the user selects Browse.
      */
     @FXML
     protected void onBrowseFile() {
@@ -115,7 +115,7 @@ public class ImportController {
     }
 
     /**
-     * Validates the selected file and starts processing on a worker thread.
+     * I validate the selected file and start a worker thread for processing.
      */
     @FXML
     protected void onAnalyzeFile() {
@@ -130,18 +130,18 @@ public class ImportController {
             return;
         }
 
-        // Every JavaFX Task is single-use, so a separate instance is needed
-        // per validated import; controls stay locked until it completes.
+        // I create a separate Task for each import because JavaFX Tasks are
+        // single-use. I lock the controls until the task finishes.
         TextImportTask task = new TextImportTask(sourceFile, applicationController);
         activeTask = task;
         setBusy(true);
 
-        // Task properties marshal progress/messages back to JavaFX safely.
+        // I bind Task properties so worker progress is displayed safely in JavaFX.
         progressBar.progressProperty().bind(task.progressProperty());
         statusLabel.textProperty().bind(task.messageProperty());
 
-        // These completion handlers run on the JavaFX thread, which is why
-        // they can restore controls and trigger the next screen refresh.
+        // I handle task completion on the JavaFX thread so I can restore the
+        // controls and trigger the next screen refresh safely.
         task.setOnSucceeded(event -> {
             ImportSummary summary = task.getValue();
             finishTask();
@@ -165,14 +165,14 @@ public class ImportController {
             statusLabel.setText("File processing cancelled.");
         });
 
-        // A daemon thread avoids keeping the JVM running after the window closes.
+        // I use a daemon thread so an import cannot keep the app alive after exit.
         Thread worker = new Thread(task, WORKER_THREAD_NAME);
         worker.setDaemon(true);
         worker.start();
     }
 
     /**
-     * Requests cancellation of the active file-processing task.
+     * I request cancellation of the active file-processing task.
      */
     @FXML
     protected void onCancelAnalysis() {
@@ -182,7 +182,7 @@ public class ImportController {
     }
 
     /**
-     * Validates and converts the current path field to a Path.
+     * I validate the current path field and convert it into a Path.
      *
      * @return valid text-file path, or null when validation fails
      */
@@ -211,7 +211,7 @@ public class ImportController {
     }
 
     /**
-     * Updates validation feedback and prevents analysis when the input is invalid.
+     * I update validation feedback and disable imports when the input is invalid.
      */
     private void refreshValidation() {
         if (activeTask != null) {
@@ -240,7 +240,7 @@ public class ImportController {
     }
 
     /**
-     * Locks controls that should not change while a file is being processed.
+     * I lock controls that must not change while a file is being processed.
      *
      * @param busy true while a background task is active
      */
@@ -252,11 +252,11 @@ public class ImportController {
     }
 
     /**
-     * Removes task bindings and restores the normal control state.
+     * I remove task bindings and restore the normal control state.
      */
     private void finishTask() {
-        // Unbinding lets success/failure/cancellation reset the display and
-        // prepare for the next import attempt.
+        // I unbind Task properties before resetting the display so I can
+        // prepare for a new attempt after success, failure, or cancellation.
         progressBar.progressProperty().unbind();
         statusLabel.textProperty().unbind();
         activeTask = null;
@@ -265,7 +265,7 @@ public class ImportController {
     }
 
     /**
-     * Formats a completed analysis result for display.
+     * I format a completed file-import summary for display.
      *
      * @param summary result returned by the background task
      * @return user-facing summary text
@@ -287,7 +287,7 @@ public class ImportController {
     }
 
     /**
-     * Produces a short error message without exposing a stack trace in the interface.
+     * I show a short error message without exposing a stack trace in the UI.
      *
      * @param failure exception raised during file processing
      * @return user-facing error text

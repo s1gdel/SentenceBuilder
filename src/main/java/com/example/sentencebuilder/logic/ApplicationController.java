@@ -68,9 +68,10 @@ public class ApplicationController {
     }
 
     /**
-     * Reports whether a typed word is already stored in the shared vocabulary.
-     * Used by the JavaFX auto-complete screen to decide whether confirmation is
-     * needed; no database API is exposed to the user-interface layer.
+     * I check whether the shared vocabulary recognizes a typed word before
+     * the autocomplete UI decides to ask for confirmation. I keep direct
+     * database access out of the UI.
+     * AI prompt: Expose a read-only known-word check for autocomplete.
      *
      * @param wordText normalized or unnormalized word supplied by the user
      * @return true if the word is currently known
@@ -80,9 +81,11 @@ public class ApplicationController {
     }
 
     /**
-     * Adds a newly confirmed standalone word, including a first word that has
-     * no previous word from which a follower relationship can be recorded.
-     * Unlike recordSuggestionChoice, this operation creates no artificial pair.
+     * I add a confirmed unfamiliar word even if it is the first word in the
+     * editor. I avoid inventing a follower relationship when no previous word
+     * exists.
+     * AI prompt: Save a confirmed standalone word without creating a fake
+     * previous-word relationship.
      *
      * @param wordText word approved by the user in the auto-complete dialog
      */
@@ -194,10 +197,11 @@ public class ApplicationController {
                 cancelled,
                 progress);
 
-        // Jinesh Patel, October 23, 2026: Stage the import in isolation until
-        // the file has been fully read; otherwise cancellation could leave
-        // partially learned words visible in other screens.
-        // Only change shared application state after the whole file succeeds.
+        // I, Jinesh Patel, added staged importing on October 23, 2026. I keep
+        // the new vocabulary separate until the full import succeeds, because
+        // cancellation should not leave partially learned data in other tabs.
+        // AI prompt: Stage imported words and merge only after success so
+        // cancelling a background import does not change shared vocabulary.
         vocabulary.mergeFrom(stagedVocabulary);
 
         if (repository != null) {

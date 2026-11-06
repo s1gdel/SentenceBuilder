@@ -68,9 +68,11 @@ public class Word {
     }
 
     /**
-     * Adds previously staged counts to this word after an import completes.
-     * This staging/merge support was added for Jinesh Patel's cancelled-import
-     * protection on October 23, 2026.
+     * I add previously staged word counts after an import completes.
+     * I added this merge support on October 23, 2026 to prevent cancelled
+     * imports from changing the shared word totals.
+     * AI prompt: Add completed import counts to an existing word with
+     * nonnegative validation.
      *
      * @param occurrences occurrence count to add
      * @param sentenceStarts sentence-start count to add

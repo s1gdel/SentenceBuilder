@@ -5,26 +5,28 @@ import java.nio.file.Path;
 import java.util.Locale;
 
 /**
- * Validates plain-text paths selected for the Sentence Builder import screen.
- * Both the JavaFX UI and the application controller use this same validation
- * so file imports cannot bypass the required input checks.
+ * I validate paths selected for the Sentence Builder file-import screen.
+ * I reuse these checks in both JavaFX and the application controller so
+ * callers cannot bypass file prerequisites.
  *
- * <p>Written by Jinesh Patel for CS4485.0W1 Senior Design, Team 25,
- * starting September 25, 2026. NetID: JAP220022.
+ * <p>I, Jinesh Patel (NetID: JAP220022), started this class on September 25,
+ * 2026 for CS4485.0W1 Senior Design, Team 25.
+ * AI prompt: Validate selected text-file paths for existence,
+ * readability, file type, and the .txt extension.
  */
 public final class ImportFileValidator {
     private ImportFileValidator() {
     }
 
     /**
-     * Checks whether a path points to a readable plain-text file.
+     * I check whether a path points to a readable plain-text file.
      *
      * @param path path selected by the user
      * @return an empty string when valid, otherwise a user-facing error message
      */
     public static String validate(Path path) {
-        // Report a specific failed precondition so the screen does not start
-        // an import that cannot succeed or merely display a generic error.
+        // I report a specific failed precondition before starting the import
+        // instead of failing later with an unhelpful generic error.
         if (path == null) {
             return "Choose a text file before importing.";
         }
@@ -38,8 +40,8 @@ public final class ImportFileValidator {
             return "The selected file cannot be read.";
         }
 
-        // The project currently accepts plain-text filenames only; checking the
-        // extension is an input rule, not a claim to inspect file contents.
+        // I enforce the current .txt filename requirement, but I do not
+        // assume that an extension alone proves the file's contents.
         String fileName = path.getFileName().toString().toLowerCase(Locale.ROOT);
         if (!fileName.endsWith(".txt")) {
             return "Choose a plain-text (.txt) file.";

@@ -11,13 +11,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Tests autocomplete's shared controller contract without requiring a JavaFX
- * display. A declined confirmation is represented by performing no write.
+ * I test autocomplete's shared controller contract without a JavaFX display.
+ * I represent a declined confirmation by making no write.
  *
- * <p>Sentence Builder, CS4485.0W1 Senior Design, Team 25.
- * Tests by Jinesh Patel, started October 30, 2026.
- * NetID: JAP220022.
- * Confirmation regression added November 6, 2026.
+ * <p>I, Jinesh Patel (NetID: JAP220022), started these tests on October 30,
+ * 2026 for CS4485.0W1 Senior Design, Team 25. I added confirmation
+ * regression coverage on November 6, 2026.
+ * AI prompt: Test ranked autocomplete suggestions, new word recording,
+ * and recognition checks for a word the user may approve adding.
  */
 class AutocompleteIntegrationTest {
 
@@ -25,8 +26,8 @@ class AutocompleteIntegrationTest {
     Path tempDirectory;
 
     /**
-     * Verifies that the confirmation flow can check whether a user-entered word
-     * is already recognized and can add a first word without a fake follower.
+     * I verify word-recognition checks and add a confirmed first word without
+     * creating a false follower relationship.
      */
     @Test
     void unknownStandaloneWordIsAddedOnlyAfterExplicitControllerCall() {
@@ -35,8 +36,8 @@ class AutocompleteIntegrationTest {
         assertEquals(false, controller.isKnownWord("unfamiliar"));
         assertEquals(0, controller.getKnownWordCount());
 
-        // A declined JavaFX confirmation intentionally makes no controller
-        // write, so the application's word count remains unchanged.
+        // I simulate No by making no controller write and checking that
+        // the vocabulary count remains unchanged.
         assertEquals(0, controller.getKnownWordCount());
 
         controller.addUserWord("unfamiliar");
@@ -49,7 +50,7 @@ class AutocompleteIntegrationTest {
     }
 
     /**
-     * Verifies ranked suggestions and recording of a manually entered new word.
+     * I verify ranked suggestions and record a manually entered new word.
      */
     @Test
     void suggestionsAndManualChoiceUseSharedVocabulary() throws IOException {
@@ -64,8 +65,8 @@ class AutocompleteIntegrationTest {
         assertEquals(2, suggestions.get(0).followerCount());
         assertEquals("dog", suggestions.get(1).wordText());
 
-        // The selected/accepted follower is recorded through existing logic,
-        // rather than through JavaFX widgets or direct database access.
+        // I record an approved follower through existing logic, not JavaFX
+        // widgets or direct database access.
         controller.recordSuggestionChoice("the", "bird");
 
         assertEquals(4, controller.getKnownWordCount());

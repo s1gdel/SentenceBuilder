@@ -58,19 +58,19 @@ public class Vocabulary {
     }
 
     /**
-     * Merges a successfully staged import into this vocabulary.
-     * Added for Jinesh Patel's background import integration on
-     * October 23, 2026.
-     * Keeping imported counts separate until completion prevents a cancelled
-     * file from leaving partially learned application state behind.
+     * I merge completed staged imports into the shared vocabulary.
+     * I added this integration on October 23, 2026 so cancelling an import
+     * cannot leave partially learned word or follower counts behind.
+     * AI prompt: Merge staged vocabulary word and follower counts after a
+     * successful file import.
      *
      * @param importedVocabulary completed vocabulary built from one imported file
      */
     void mergeFrom(Vocabulary importedVocabulary) {
         Objects.requireNonNull(importedVocabulary, "importedVocabulary");
 
-        // Accumulate completed import counts rather than replacing data from
-        // files already learned during this application session.
+        // I add completed import counts rather than replacing words learned
+        // from earlier imports in the same session.
         for (Word importedWord : importedVocabulary.wordsByText.values()) {
             Word targetWord = getOrCreateWord(importedWord.getText());
             targetWord.addCounts(
@@ -79,8 +79,8 @@ public class Vocabulary {
                     importedWord.getSentenceEndCount());
         }
 
-        // Only completed imports reach this merge, so cancelled reads cannot
-        // leave some follower pairs behind while others are missing.
+        // I only merge followers after a completed import so cancellation
+        // cannot leave a partial set of word relationships.
         for (Map.Entry<String, Map<String, Integer>> wordEntry
                 : importedVocabulary.followerCounts.entrySet()) {
             Map<String, Integer> targetFollowers = followerCounts.computeIfAbsent(
@@ -164,9 +164,10 @@ public class Vocabulary {
     }
 
     /**
-     * Adds an unfamiliar user-confirmed word without inventing a follower pair.
-     * A word already known is left unchanged because the UI records only new
-     * standalone words through this method.
+     * I add an unfamiliar word after the user confirms it without creating
+     * a follower pair. I leave an existing word unchanged.
+     * AI prompt: Add a confirmed new word without a follower when the editor
+     * has no previous word.
      *
      * @param wordText confirmed word typed by the user
      */

@@ -3,13 +3,15 @@ package com.example.sentencebuilder.logic;
 import java.nio.file.Path;
 
 /**
- * Immutable values returned from the import worker for the JavaFX summary.
- * The UI can display progress results without rereading the source file or
- * knowing the internal vocabulary data structure.
+ * I return immutable import results to the JavaFX summary screen.
+ * I keep the file-local counts separate from the vocabulary so the UI does
+ * not need to reread the source or inspect internal data structures.
  *
- * <p>Written by Jinesh Patel for CS4485.0W1 Senior Design, Team 25,
- * starting September 25, 2026. NetID: JAP220022.
- * Distinct-word reporting added October 16, 2026.
+ * <p>I, Jinesh Patel (NetID: JAP220022), started this record on September 25,
+ * 2026 for CS4485.0W1 Senior Design, Team 25. I added distinct-word
+ * reporting on October 16, 2026.
+ * AI prompt: Create an immutable import summary with source path, line and
+ * word counts, unique word count, file size, and elapsed time.
  *
  * @param sourceFile imported text file
  * @param lineCount number of source lines processed

@@ -87,19 +87,19 @@ public class HelloApplication extends Application {
         AutocompleteController autocompleteController = autocompleteLoader.getController();
         autocompleteController.setApplicationController(applicationController);
 
-        // Jinesh Patel, October 30, 2026: Gate feature tabs until an
-        // import or database restore supplies usable vocabulary. This avoids
-        // sending users into screens that cannot yet produce results.
-        // Features that depend on learned words stay unavailable until vocabulary exists.
+        // I, Jinesh Patel, added this gate on October 30, 2026. I keep the
+        // Generate and Autocomplete tabs unavailable until vocabulary exists,
+        // so users cannot enter screens that have no data to use.
+        // AI prompt: Disable feature tabs until the shared vocabulary has words.
         boolean noVocabulary = applicationController.getKnownWordCount() == 0;
         generateTab.setDisable(noVocabulary);
         autocompleteTab.setDisable(noVocabulary);
 
-        // Jinesh Patel, October 30, 2026: Keep cross-tab navigation here in
-        // the application shell, rather than coupling ImportController to
-        // GenerateController or AutocompleteController.
-        // A successful import immediately refreshes the next screen and moves the
-        // user forward instead of requiring a manual refresh or extra navigation.
+        // I, Jinesh Patel, connected these tabs on October 30, 2026. I keep
+        // navigation here instead of making the Import controller know about
+        // other screens. On success I refresh the views and select Generate.
+        // AI prompt: Refresh and enable generation/autocomplete after an import,
+        // then navigate to Generate through an application-level callback.
         importController.setOnImportCompleted(() -> {
             generateController.refresh();
             autocompleteController.refresh();

@@ -1,14 +1,15 @@
 -- CS4485 Senior Design - Sentence Builder
 -- Database schema foundation.
--- Initial structure contributed by Jinesh Patel for CS4485.0W1
--- Senior Design, Team 25, starting September 25, 2026.
--- NetID: JAP220022.
--- Further database implementation is maintained by the team.
+-- I, Jinesh Patel (NetID: JAP220022), contributed the initial schema
+-- structure starting September 25, 2026 for CS4485.0W1 Senior Design,
+-- Team 25. I leave later JDBC implementation and schema maintenance
+-- to the team's database contributors.
+-- AI prompt: Design a MySQL schema for words, follower relationships,
+-- imported files, and generated sentences with primary and foreign keys.
 --
--- This schema uses surrogate integer keys for entities that may be referenced
--- by other tables. Digit-only values are stored as numbers only when arithmetic
--- is meaningful. Variable-length text uses VARCHAR/TEXT because word, file, and
--- sentence lengths are not fixed.
+-- I use surrogate integer keys for referenced records and variable-length
+-- text types for words, file paths, and sentence content. I store numeric
+-- counts as numbers because arithmetic is meaningful for these values.
 
 CREATE DATABASE IF NOT EXISTS sentence_builder
     CHARACTER SET utf8mb4

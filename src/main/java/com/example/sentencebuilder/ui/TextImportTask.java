@@ -8,9 +8,9 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 /**
- * I run file reads and repository writes off the JavaFX application thread.
- * I publish progress and status through Task properties instead of touching
- * JavaFX controls from the worker.
+ * Runs file reads and repository writes off the JavaFX application thread.
+ * Progress and status are published through Task properties rather than
+ * directly modifying JavaFX controls from the worker.
  *
  * <p>I, Jinesh Patel (NetID: JAP220022), started this task on October 9,
  * 2026 for CS4485.0W1 Senior Design, Team 25. I connected it to the
@@ -23,7 +23,7 @@ public class TextImportTask extends Task<ImportSummary> {
     private final ApplicationController applicationController;
 
     /**
-     * I create a background task for a previously validated text file.
+     * Creates a background task for a previously validated text file.
      *
      * @param sourceFile text file selected by the user
      * @param applicationController shared business-logic controller
@@ -36,7 +36,7 @@ public class TextImportTask extends Task<ImportSummary> {
     }
 
     /**
-     * I import the selected file through shared business logic and publish
+     * Imports the selected file through shared business logic and publishes
      * progress and status updates for the JavaFX screen.
      *
      * @return summary of the completed file import
@@ -46,14 +46,14 @@ public class TextImportTask extends Task<ImportSummary> {
     protected ImportSummary call() throws Exception {
         updateMessage("Preparing " + sourceFile.getFileName() + "...");
 
-        // I keep long-running file work inside the Task and publish progress
-        // so the UI never has to manage the file-reading loop.
+        // Keep long-running file operations in the Task and publish progress
+        // so the UI does not manage file-reading loops.
         return applicationController.importFile(
                 sourceFile,
                 this::isCancelled,
                 (completedLines, totalLines) -> {
-                    // I treat an empty file as completed progress rather than
-                    // dividing by zero or leaving the bar indeterminate.
+                    // Treat an empty file as completed progress to avoid a zero
+                    // denominator or an indeterminate progress bar.
                     if (totalLines == 0) {
                         updateProgress(1, 1);
                     } else {

@@ -3,9 +3,9 @@ package com.example.sentencebuilder.logic;
 import java.nio.file.Path;
 
 /**
- * I return immutable import results to the JavaFX summary screen.
- * I keep the file-local counts separate from the vocabulary so the UI does
- * not need to reread the source or inspect internal data structures.
+ * Provides immutable import results to the JavaFX summary screen.
+ * File-local counts remain separate from vocabulary state, avoiding the need
+ * for the UI to reread files or inspect internal data structures.
  *
  * <p>I, Jinesh Patel (NetID: JAP220022), started this record on September 25,
  * 2026 for CS4485.0W1 Senior Design, Team 25. I added distinct-word

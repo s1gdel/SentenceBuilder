@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * I test autocomplete's shared controller contract without a JavaFX display.
- * I represent a declined confirmation by making no write.
+ * Tests autocomplete's shared controller contract without a JavaFX display.
+ * A declined confirmation is represented by making no write.
  *
  * <p>I, Jinesh Patel (NetID: JAP220022), started these tests on October 30,
  * 2026 for CS4485.0W1 Senior Design, Team 25. I added confirmation
@@ -26,7 +26,7 @@ class AutocompleteIntegrationTest {
     Path tempDirectory;
 
     /**
-     * I verify word-recognition checks and add a confirmed first word without
+     * Verifies word-recognition checks and adding a confirmed first word without
      * creating a false follower relationship.
      */
     @Test
@@ -36,7 +36,7 @@ class AutocompleteIntegrationTest {
         assertEquals(false, controller.isKnownWord("unfamiliar"));
         assertEquals(0, controller.getKnownWordCount());
 
-        // I simulate No by making no controller write and checking that
+        // Simulate No by making no controller write and verifying that
         // the vocabulary count remains unchanged.
         assertEquals(0, controller.getKnownWordCount());
 
@@ -50,7 +50,7 @@ class AutocompleteIntegrationTest {
     }
 
     /**
-     * I verify ranked suggestions and record a manually entered new word.
+     * Verifies ranked suggestions and recording of a manually entered word.
      */
     @Test
     void suggestionsAndManualChoiceUseSharedVocabulary() throws IOException {
@@ -65,8 +65,8 @@ class AutocompleteIntegrationTest {
         assertEquals(2, suggestions.get(0).followerCount());
         assertEquals("dog", suggestions.get(1).wordText());
 
-        // I record an approved follower through existing logic, not JavaFX
-        // widgets or direct database access.
+        // Record an approved follower through existing logic rather than
+        // JavaFX widgets or direct database access.
         controller.recordSuggestionChoice("the", "bird");
 
         assertEquals(4, controller.getKnownWordCount());

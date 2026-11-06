@@ -13,9 +13,9 @@ import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 
 /**
- * I read UTF-8 files using the team's tokenizer and vocabulary rules.
- * I count lines first for determinate progress, then analyze a second pass
- * and stage vocabulary changes in the supplied object.
+ * Reads UTF-8 files using the team's tokenizer and vocabulary rules.
+ * An initial pass counts lines for determinate progress; a second pass
+ * analyzes text and stages vocabulary changes in the supplied object.
  *
  * <p>I, Jinesh Patel (NetID: JAP220022), started this module on September 25,
  * 2026 for CS4485.0W1 Senior Design, Team 25. I integrated vocabulary on
@@ -26,8 +26,8 @@ import java.util.function.BooleanSupplier;
 public class TextFileAnalyzer {
 
     /**
-     * I read a text file into a temporary vocabulary and report progress.
-     * I keep this overload for callers that do not supply a shared vocabulary.
+     * Reads a text file into a temporary vocabulary and reports progress.
+     * This overload supports callers without a shared vocabulary instance.
      *
      * @param source file to read using UTF-8
      * @param cancelled callback used to stop work when the user cancels
@@ -44,9 +44,9 @@ public class TextFileAnalyzer {
     }
 
     /**
-     * I read a text file into the supplied vocabulary while reporting progress.
-     * I return counts for this file alone, even if the shared vocabulary
-     * contains words learned from earlier files.
+     * Reads a text file into the supplied vocabulary while reporting progress.
+     * Returned counts describe only the current file, even if the vocabulary
+     * already contains words learned from earlier imports.
      *
      * @param source file to read using UTF-8
      * @param vocabulary application vocabulary that should learn the imported text
@@ -67,8 +67,8 @@ public class TextFileAnalyzer {
         Objects.requireNonNull(cancelled, "cancelled");
         Objects.requireNonNull(progress, "progress");
 
-        // I count lines before analysis to make progress percentages useful
-        // even for large books processed on a background thread.
+        // Count lines before analysis to enable meaningful progress percentages
+        // for large files processed on a background thread.
         long startNanos = System.nanoTime();
         long totalLines = countLines(source, cancelled);
         long completedLines = 0;
@@ -81,13 +81,13 @@ public class TextFileAnalyzer {
             while ((line = reader.readLine()) != null) {
                 checkCancelled(cancelled);
 
-                // I reuse the Vocabulary tokenization rules for file-local counts.
+                // Reuse the Vocabulary tokenization rules for file-local counts.
                 var tokens = ImportTokenizer.tokenizeLine(line);
                 tokenCount += tokens.size();
                 distinctWordsInFile.addAll(tokens);
 
-                // I learn into the supplied (typically staged) vocabulary;
-                // I leave the decision to merge only on success to the controller.
+                // Learn into the supplied (typically staged) vocabulary. The
+                // application controller determines when a successful merge occurs.
                 vocabulary.learnFromLine(line);
 
                 completedLines++;
@@ -106,7 +106,7 @@ public class TextFileAnalyzer {
     }
 
     /**
-     * I count lines in a first pass so the second can report progress.
+     * Counts lines in the first pass to support progress during the second.
      *
      * @param source file being analyzed
      * @param cancelled cancellation callback
@@ -117,8 +117,8 @@ public class TextFileAnalyzer {
         long lineCount = 0;
         try (BufferedReader reader = Files.newBufferedReader(source, StandardCharsets.UTF_8)) {
             while (reader.readLine() != null) {
-                // I check cancellation in the counting pass as well as analysis
-                // so the user can stop long imports promptly.
+                // Check cancellation during both counting and analysis so long
+                // imports can be stopped promptly.
                 checkCancelled(cancelled);
                 lineCount++;
             }
@@ -127,7 +127,7 @@ public class TextFileAnalyzer {
     }
 
     /**
-     * I stop analysis promptly when the JavaFX task has been cancelled.
+     * Stops analysis promptly when cancellation is requested.
      *
      * @param cancelled callback that reports cancellation state
      */

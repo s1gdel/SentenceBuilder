@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  I designed the Sentence Builder JavaFX file-import screen to show progress,
-  cancellation, status, and a file summary while a worker imports text.
+  Sentence Builder JavaFX file-import layout with progress, cancellation,
+  status feedback, and file summaries during background text imports.
   I, Jinesh Patel (NetID: JAP220022), started this layout on October 9, 2026
   for CS4485.0W1 Senior Design, Team 25.
   AI prompt: Create an import-view FXML layout with file chooser, validation,
@@ -43,7 +43,7 @@
 
     <Label fx:id="validationLabel" wrapText="true"/>
 
-    <!-- I keep progress visible so users can monitor longer imports. -->
+    <!-- Progress remains visible so longer imports can be monitored. -->
     <HBox alignment="CENTER_LEFT" spacing="8.0">
         <Button fx:id="analyzeButton"
                 text="_Import File"

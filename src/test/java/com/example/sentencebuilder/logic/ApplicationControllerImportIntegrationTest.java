@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * I test import-to-vocabulary integration with temporary text files and an
- * in-memory controller so these tests do not require a live database.
+ * Tests import-to-vocabulary integration with temporary text files and an
+ * in-memory controller, without requiring a live database.
  *
  * <p>I, Jinesh Patel (NetID: JAP220022), started these tests on October 30,
  * 2026 for CS4485.0W1 Senior Design, Team 25.
@@ -27,7 +27,7 @@ class ApplicationControllerImportIntegrationTest {
     Path tempDirectory;
 
     /**
-     * I verify that a completed import is usable by existing generation logic.
+     * Verifies that a completed import is usable by existing generation logic.
      */
     @Test
     void completedImportFeedsSharedVocabularyAndGeneration() throws IOException {
@@ -40,7 +40,7 @@ class ApplicationControllerImportIntegrationTest {
                 () -> false,
                 (completed, total) -> { });
 
-        // I check file-local summary counts and confirm that learned words
+        // Check file-local summary counts and verify that learned words
         // are available to generation through the shared controller.
         assertEquals(3, summary.lineCount());
         assertEquals(6, summary.tokenCount());
@@ -55,7 +55,7 @@ class ApplicationControllerImportIntegrationTest {
     }
 
     /**
-     * I verify that cancelling after staging lines does not partially
+     * Verifies that cancelling after staging lines does not partially
      * modify the shared vocabulary.
      */
     @Test
@@ -64,7 +64,7 @@ class ApplicationControllerImportIntegrationTest {
         Files.writeString(source, "one two\nthree four\nfive six\nseven eight");
 
         ApplicationController controller = new ApplicationController();
-        // I delay cancellation into the second pass to verify that partially
+        // Delay cancellation into the second pass to verify that partially
         // staged words never reach shared vocabulary.
         AtomicInteger cancellationChecks = new AtomicInteger();
 

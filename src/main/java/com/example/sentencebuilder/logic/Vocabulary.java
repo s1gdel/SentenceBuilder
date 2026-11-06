@@ -58,9 +58,9 @@ public class Vocabulary {
     }
 
     /**
-     * I merge completed staged imports into the shared vocabulary.
-     * I added this integration on October 23, 2026 so cancelling an import
-     * cannot leave partially learned word or follower counts behind.
+     * Merges successfully staged imports into the shared vocabulary.
+     * Contribution (October 23, 2026): I, Jinesh Patel, added this merge
+     * integration to prevent cancelled imports from leaving partial counts.
      * AI prompt: Merge staged vocabulary word and follower counts after a
      * successful file import.
      *
@@ -69,7 +69,7 @@ public class Vocabulary {
     void mergeFrom(Vocabulary importedVocabulary) {
         Objects.requireNonNull(importedVocabulary, "importedVocabulary");
 
-        // I add completed import counts rather than replacing words learned
+        // Accumulate new import counts instead of replacing words learned
         // from earlier imports in the same session.
         for (Word importedWord : importedVocabulary.wordsByText.values()) {
             Word targetWord = getOrCreateWord(importedWord.getText());
@@ -79,8 +79,8 @@ public class Vocabulary {
                     importedWord.getSentenceEndCount());
         }
 
-        // I only merge followers after a completed import so cancellation
-        // cannot leave a partial set of word relationships.
+        // Merge followers only after a completed import so cancellation
+        // cannot leave partial word relationships.
         for (Map.Entry<String, Map<String, Integer>> wordEntry
                 : importedVocabulary.followerCounts.entrySet()) {
             Map<String, Integer> targetFollowers = followerCounts.computeIfAbsent(
@@ -164,8 +164,8 @@ public class Vocabulary {
     }
 
     /**
-     * I add an unfamiliar word after the user confirms it without creating
-     * a follower pair. I leave an existing word unchanged.
+     * Adds a user-confirmed unfamiliar word without creating a follower pair.
+     * Previously known words remain unchanged.
      * AI prompt: Add a confirmed new word without a follower when the editor
      * has no previous word.
      *

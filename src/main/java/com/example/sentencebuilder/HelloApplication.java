@@ -87,17 +87,17 @@ public class HelloApplication extends Application {
         AutocompleteController autocompleteController = autocompleteLoader.getController();
         autocompleteController.setApplicationController(applicationController);
 
-        // I, Jinesh Patel, added this gate on October 30, 2026. I keep the
-        // Generate and Autocomplete tabs unavailable until vocabulary exists,
-        // so users cannot enter screens that have no data to use.
+        // Contribution (October 30, 2026): I, Jinesh Patel, added this guard.
+        // Generate and Autocomplete remain unavailable until vocabulary exists,
+        // preventing navigation to screens without usable data.
         // AI prompt: Disable feature tabs until the shared vocabulary has words.
         boolean noVocabulary = applicationController.getKnownWordCount() == 0;
         generateTab.setDisable(noVocabulary);
         autocompleteTab.setDisable(noVocabulary);
 
-        // I, Jinesh Patel, connected these tabs on October 30, 2026. I keep
-        // navigation here instead of making the Import controller know about
-        // other screens. On success I refresh the views and select Generate.
+        // Contribution (October 30, 2026): I, Jinesh Patel, connected these tabs.
+        // Navigation stays in the application shell rather than coupling the
+        // Import controller to other screens. Success refreshes views and selects Generate.
         // AI prompt: Refresh and enable generation/autocomplete after an import,
         // then navigate to Generate through an application-level callback.
         importController.setOnImportCompleted(() -> {

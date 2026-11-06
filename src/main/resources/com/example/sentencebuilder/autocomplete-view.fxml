@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  I created the Sentence Builder JavaFX autocomplete screen with a text
-  editor, ranked suggestions, and a choice button.
+  Sentence Builder JavaFX autocomplete layout with a text editor, ranked
+  suggestions, and a choice button.
   I, Jinesh Patel (NetID: JAP220022), started this layout on October 30,
   2026 for CS4485.0W1 Senior Design, Team 25.
   I added unknown-word confirmation in the controller on November 6, 2026.
@@ -38,7 +38,7 @@
               prefRowCount="6"
               VBox.vgrow="ALWAYS"/>
 
-    <!-- I show suggestions after completed words, not during partial typing. -->
+    <!-- Suggestions appear after completed words, not during partial typing. -->
     <Label text="Next-word suggestions" style="-fx-font-weight: bold;"/>
     <ListView fx:id="suggestionList" prefHeight="160.0"/>
 

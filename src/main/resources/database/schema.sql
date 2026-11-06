@@ -2,14 +2,14 @@
 -- Database schema foundation.
 -- I, Jinesh Patel (NetID: JAP220022), contributed the initial schema
 -- structure starting September 25, 2026 for CS4485.0W1 Senior Design,
--- Team 25. I leave later JDBC implementation and schema maintenance
+-- Team 25. Later JDBC implementation and schema maintenance belong
 -- to the team's database contributors.
 -- AI prompt: Design a MySQL schema for words, follower relationships,
 -- imported files, and generated sentences with primary and foreign keys.
 --
--- I use surrogate integer keys for referenced records and variable-length
--- text types for words, file paths, and sentence content. I store numeric
--- counts as numbers because arithmetic is meaningful for these values.
+-- Surrogate integer keys identify referenced records. Variable-length text
+-- fields store words, paths, and sentences; numeric count fields support
+-- arithmetic and aggregation.
 
 CREATE DATABASE IF NOT EXISTS sentence_builder
     CHARACTER SET utf8mb4

@@ -107,9 +107,9 @@ public class GenerateController {
     }
 
     /**
-     * I disable generation controls until the application has usable vocabulary.
-     * I, Jinesh Patel, added the empty-vocabulary UI guard on October 30,
-     * 2026 without changing the team's sentence-generation algorithms.
+     * Disables generation controls until the application has usable vocabulary.
+     * Contribution (October 30, 2026): I, Jinesh Patel, added this UI guard
+     * without changing the team's sentence-generation algorithms.
      * AI prompt: Disable generation controls until imported vocabulary exists.
      *
      * @param disabled true when sentence generation should not be available

@@ -68,9 +68,9 @@ public class ApplicationController {
     }
 
     /**
-     * I check whether the shared vocabulary recognizes a typed word before
-     * the autocomplete UI decides to ask for confirmation. I keep direct
-     * database access out of the UI.
+     * Checks whether the shared vocabulary recognizes a typed word before
+     * the autocomplete UI requests confirmation. This avoids exposing
+     * direct database access to the UI.
      * AI prompt: Expose a read-only known-word check for autocomplete.
      *
      * @param wordText normalized or unnormalized word supplied by the user
@@ -81,9 +81,8 @@ public class ApplicationController {
     }
 
     /**
-     * I add a confirmed unfamiliar word even if it is the first word in the
-     * editor. I avoid inventing a follower relationship when no previous word
-     * exists.
+     * Adds a confirmed unfamiliar word, including the first word in the editor.
+     * No artificial follower relationship is created without a previous word.
      * AI prompt: Save a confirmed standalone word without creating a fake
      * previous-word relationship.
      *
@@ -197,9 +196,9 @@ public class ApplicationController {
                 cancelled,
                 progress);
 
-        // I, Jinesh Patel, added staged importing on October 23, 2026. I keep
-        // the new vocabulary separate until the full import succeeds, because
-        // cancellation should not leave partially learned data in other tabs.
+        // Contribution (October 23, 2026): I, Jinesh Patel, added staged importing.
+        // Vocabulary changes remain isolated until the full import succeeds,
+        // preventing cancelled imports from leaking partial data to other tabs.
         // AI prompt: Stage imported words and merge only after success so
         // cancelling a background import does not change shared vocabulary.
         vocabulary.mergeFrom(stagedVocabulary);

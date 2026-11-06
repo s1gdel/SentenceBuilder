@@ -69,6 +69,8 @@ public class Word {
 
     /**
      * Adds previously staged counts to this word after an import completes.
+     * This staging/merge support was added for Jinesh Patel's cancelled-import
+     * protection on October 23, 2026.
      *
      * @param occurrences occurrence count to add
      * @param sentenceStarts sentence-start count to add

@@ -87,11 +87,17 @@ public class HelloApplication extends Application {
         AutocompleteController autocompleteController = autocompleteLoader.getController();
         autocompleteController.setApplicationController(applicationController);
 
+        // Jinesh Patel, October 30, 2026: Gate feature tabs until an
+        // import or database restore supplies usable vocabulary. This avoids
+        // sending users into screens that cannot yet produce results.
         // Features that depend on learned words stay unavailable until vocabulary exists.
         boolean noVocabulary = applicationController.getKnownWordCount() == 0;
         generateTab.setDisable(noVocabulary);
         autocompleteTab.setDisable(noVocabulary);
 
+        // Jinesh Patel, October 30, 2026: Keep cross-tab navigation here in
+        // the application shell, rather than coupling ImportController to
+        // GenerateController or AutocompleteController.
         // A successful import immediately refreshes the next screen and moves the
         // user forward instead of requiring a manual refresh or extra navigation.
         importController.setOnImportCompleted(() -> {

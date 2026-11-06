@@ -8,7 +8,13 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 /**
- * Runs a text-file import away from the JavaFX application thread.
+ * Runs file reading and any associated repository writes off the JavaFX
+ * application thread. Task message/progress properties are observed by the
+ * controller, so workers never modify scene controls directly.
+ *
+ * <p>Written by Jinesh Patel for CS4485.0W1 Senior Design, Team 25,
+ * starting October 9, 2026. NetID: JAP220022.
+ * Shared-controller delegation added October 23, 2026.
  */
 public class TextImportTask extends Task<ImportSummary> {
     private final Path sourceFile;
@@ -38,10 +44,14 @@ public class TextImportTask extends Task<ImportSummary> {
     protected ImportSummary call() throws Exception {
         updateMessage("Preparing " + sourceFile.getFileName() + "...");
 
+        // The task handles long-running work and publishes a progress fraction
+        // to JavaFX; the UI does not need to manage file read operations.
         return applicationController.importFile(
                 sourceFile,
                 this::isCancelled,
                 (completedLines, totalLines) -> {
+                    // Empty files should still complete the progress bar rather
+                    // than dividing by zero or staying indeterminate.
                     if (totalLines == 0) {
                         updateProgress(1, 1);
                     } else {

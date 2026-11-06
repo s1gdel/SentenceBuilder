@@ -17,8 +17,14 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
 /**
- * Handles event-driven behavior for the current text-file analysis screen.
- * File reading is delegated to a background task so the JavaFX thread stays responsive.
+ * Handles input validation, background file import, progress, cancellation,
+ * and results for the Sentence Builder Import tab. A JavaFX Task performs file
+ * and repository work so user input and rendering remain responsive.
+ *
+ * <p>Written by Jinesh Patel for CS4485.0W1 Senior Design, Team 25,
+ * starting October 9, 2026. NetID: JAP220022.
+ * Vocabulary integration revised October 16 and 23, 2026; cross-screen
+ * coordination added October 30, 2026.
  */
 public class ImportController {
     private static final String WORKER_THREAD_NAME = "sentence-builder-file-import";
@@ -47,8 +53,11 @@ public class ImportController {
     @FXML
     private TextArea summaryArea;
 
+    /** Non-null during a running task, preventing overlapping imports. */
     private TextImportTask activeTask;
+    /** Shared application logic supplied by startup. */
     private ApplicationController applicationController;
+    /** UI callback for tab navigation without depending on another screen. */
     private Runnable onImportCompleted = () -> { };
 
     /**
@@ -121,13 +130,18 @@ public class ImportController {
             return;
         }
 
+        // Every JavaFX Task is single-use, so a separate instance is needed
+        // per validated import; controls stay locked until it completes.
         TextImportTask task = new TextImportTask(sourceFile, applicationController);
         activeTask = task;
         setBusy(true);
 
+        // Task properties marshal progress/messages back to JavaFX safely.
         progressBar.progressProperty().bind(task.progressProperty());
         statusLabel.textProperty().bind(task.messageProperty());
 
+        // These completion handlers run on the JavaFX thread, which is why
+        // they can restore controls and trigger the next screen refresh.
         task.setOnSucceeded(event -> {
             ImportSummary summary = task.getValue();
             finishTask();
@@ -151,6 +165,7 @@ public class ImportController {
             statusLabel.setText("File processing cancelled.");
         });
 
+        // A daemon thread avoids keeping the JVM running after the window closes.
         Thread worker = new Thread(task, WORKER_THREAD_NAME);
         worker.setDaemon(true);
         worker.start();
@@ -240,6 +255,8 @@ public class ImportController {
      * Removes task bindings and restores the normal control state.
      */
     private void finishTask() {
+        // Unbinding lets success/failure/cancellation reset the display and
+        // prepare for the next import attempt.
         progressBar.progressProperty().unbind();
         statusLabel.textProperty().unbind();
         activeTask = null;

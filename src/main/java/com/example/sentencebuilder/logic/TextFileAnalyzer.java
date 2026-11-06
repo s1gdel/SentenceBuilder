@@ -13,7 +13,14 @@ import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 
 /**
- * Reads a text file using the project's current tokenization and vocabulary logic.
+ * Reads UTF-8 text using the shared tokenizer and vocabulary rules. One pass
+ * counts lines for a determinate progress bar; a second pass builds the summary
+ * and stages vocabulary changes in the object supplied by the application.
+ *
+ * <p>Written by Jinesh Patel for CS4485.0W1 Senior Design, Team 25,
+ * starting September 25, 2026. NetID: JAP220022.
+ * Vocabulary integration revised October 16, 2026 and shared-controller import
+ * integration revised October 23, 2026.
  */
 public class TextFileAnalyzer {
 
@@ -60,6 +67,8 @@ public class TextFileAnalyzer {
         Objects.requireNonNull(cancelled, "cancelled");
         Objects.requireNonNull(progress, "progress");
 
+        // Counting first makes progress percentages meaningful for large books
+        // while leaving the JavaFX application thread responsive.
         long startNanos = System.nanoTime();
         long totalLines = countLines(source, cancelled);
         long completedLines = 0;
@@ -77,7 +86,8 @@ public class TextFileAnalyzer {
                 tokenCount += tokens.size();
                 distinctWordsInFile.addAll(tokens);
 
-                // Keep the application's shared vocabulary up to date for later features.
+                // Learn into the supplied vocabulary, normally a temporary
+                // staging object. The controller merges it only on success.
                 vocabulary.learnFromLine(line);
 
                 completedLines++;
@@ -107,6 +117,8 @@ public class TextFileAnalyzer {
         long lineCount = 0;
         try (BufferedReader reader = Files.newBufferedReader(source, StandardCharsets.UTF_8)) {
             while (reader.readLine() != null) {
+                // Cancellation also applies to the counting pass, not only the
+                // later analysis pass, so the user can stop large imports early.
                 checkCancelled(cancelled);
                 lineCount++;
             }

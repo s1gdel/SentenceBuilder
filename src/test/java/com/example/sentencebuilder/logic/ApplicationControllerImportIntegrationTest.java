@@ -13,7 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Integration tests for the file-import flow that feeds the shared application vocabulary.
+ * Tests import-to-vocabulary integration using temporary text files and an
+ * in-memory application controller, without requiring a live database.
+ *
+ * <p>Written by Jinesh Patel for CS4485.0W1 Senior Design, Team 25,
+ * starting October 30, 2026. NetID: JAP220022.
  */
 class ApplicationControllerImportIntegrationTest {
 
@@ -34,6 +38,8 @@ class ApplicationControllerImportIntegrationTest {
                 () -> false,
                 (completed, total) -> { });
 
+        // The summary belongs to this imported file, but the result must also
+        // be reusable by sentence generation through shared application state.
         assertEquals(3, summary.lineCount());
         assertEquals(6, summary.tokenCount());
         assertEquals(3, summary.distinctWordCount());
@@ -56,6 +62,8 @@ class ApplicationControllerImportIntegrationTest {
         Files.writeString(source, "one two\nthree four\nfive six\nseven eight");
 
         ApplicationController controller = new ApplicationController();
+        // Delay cancellation into the second pass to test that partially
+        // staged words never reach the shared application vocabulary.
         AtomicInteger cancellationChecks = new AtomicInteger();
 
         assertThrows(

@@ -35,7 +35,7 @@ src/main/java/com/example/sentencebuilder/
 ├── ui/       → JavaFX controllers, background UI tasks, user-interface behavior
 ├── logic/    → Word/sentence models, vocabulary, tokenization,
 │               sentence generation, import analysis, application controller
-└── data/     → Database access layer (currently a repository placeholder)
+└── data/     → JDBC/MySQL repository implementation (with offline fallback)
 
 src/main/resources/
 ├── com/example/sentencebuilder/ → FXML resources
@@ -69,7 +69,8 @@ The project is still in development, and the import, generation, and early auto-
   - requests next-word suggestions only after space, period, or comma
   - shows ranked follower choices from the shared vocabulary
   - lets the user insert a suggestion or type a different next word
-  - records selected/typed follower choices through `ApplicationController.recordSuggestionChoice(...)`
+  - asks before adding an unrecognized manually typed word; No leaves it out of vocabulary
+  - records accepted selected/typed follower choices through `ApplicationController.recordSuggestionChoice(...)`
 - Basic JavaFX file-analysis screen includes:
   - text-file selection
   - file validation
@@ -81,12 +82,12 @@ The project is still in development, and the import, generation, and early auto-
 
 ### Still to be implemented or integrated
 
-- JDBC/MySQL implementation of `VocabularyRepository` / database CRUD wiring.
-- Loading persisted vocabulary at application startup.
-- Persisting imported-file metadata and learned word/follower statistics.
+- Validate JDBC/MySQL integration and database CRUD operations end-to-end.
+- Verify persisted vocabulary reloads correctly at application startup.
+- Verify imported-file metadata and learned word/follower statistics persist.
 - JavaFX screens/event handling for reports and word management.
-- Complete auto-complete UX/polish and persistence through the future JDBC repository.
-- Persisting generated-sentence history and duplicate-reporting data.
+- Test auto-complete confirmation, database failures, and remaining UX polish.
+- Test generated-sentence persistence and duplicate-reporting data.
 - Additional automated testing around database persistence and the remaining application flows.
 - Final UI/UX polish.
 
@@ -106,7 +107,7 @@ The project is still in development, and the import, generation, and early auto-
 
 5. Run `HelloApplication.java`.
 
-The current interface can select and process a plain-text file into the application's in-memory vocabulary while keeping the work off the JavaFX thread. MySQL persistence is not active yet because the JDBC repository implementation is still pending.
+The current interface imports text on a background task and shares learned words with Generate and Auto-complete. JDBC persistence is enabled when MySQL is available; startup falls back to memory-only mode with a visible offline title when database initialization fails.
 
 ## Contributing
 
@@ -119,4 +120,4 @@ The current interface can select and process a plain-text file into the applicat
 
 ## Status
 
-In progress: file processing flows through the shared application controller, Import/Generate are integrated, and an initial event-driven auto-complete screen now uses the existing suggestion and user-choice logic. Integration tests cover imports, cancellation safety, suggestion ranking, and manual next-word choices. JDBC persistence and the remaining JavaFX features are still under development.
+In progress: file processing flows through the shared application controller, Import/Generate are integrated, and an initial event-driven auto-complete screen now uses the existing suggestion and user-choice logic. Integration tests cover imports, cancellation safety, suggestion ranking, and manual next-word choices. JDBC integration and remaining JavaFX features require end-to-end testing and final polish.

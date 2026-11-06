@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sentence Builder JavaFX auto-complete screen.
+  Written by Jinesh Patel for CS4485.0W1 Senior Design, Team 25,
+  starting October 30, 2026. NetID: JAP220022.
+  The controller confirms unfamiliar words before learning them (Nov 6, 2026).
+-->
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -29,6 +35,7 @@
               prefRowCount="6"
               VBox.vgrow="ALWAYS"/>
 
+    <!-- Suggestions appear after completed words, never during partial typing. -->
     <Label text="Next-word suggestions" style="-fx-font-weight: bold;"/>
     <ListView fx:id="suggestionList" prefHeight="160.0"/>
 

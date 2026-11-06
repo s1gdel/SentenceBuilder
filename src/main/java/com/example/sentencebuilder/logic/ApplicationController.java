@@ -68,6 +68,32 @@ public class ApplicationController {
     }
 
     /**
+     * Reports whether a typed word is already stored in the shared vocabulary.
+     * Used by the JavaFX auto-complete screen to decide whether confirmation is
+     * needed; no database API is exposed to the user-interface layer.
+     *
+     * @param wordText normalized or unnormalized word supplied by the user
+     * @return true if the word is currently known
+     */
+    public boolean isKnownWord(String wordText) {
+        return vocabulary.findWord(wordText) != null;
+    }
+
+    /**
+     * Adds a newly confirmed standalone word, including a first word that has
+     * no previous word from which a follower relationship can be recorded.
+     * Unlike recordSuggestionChoice, this operation creates no artificial pair.
+     *
+     * @param wordText word approved by the user in the auto-complete dialog
+     */
+    public void addUserWord(String wordText) {
+        vocabulary.addUserWord(wordText);
+        if (repository != null) {
+            repository.saveVocabulary(vocabulary);
+        }
+    }
+
+    /**
      * Starts sentence generation for the UI layer using weighted random selection.
      *
      * @param startWordText word selected by the user
@@ -168,6 +194,9 @@ public class ApplicationController {
                 cancelled,
                 progress);
 
+        // Jinesh Patel, October 23, 2026: Stage the import in isolation until
+        // the file has been fully read; otherwise cancellation could leave
+        // partially learned words visible in other screens.
         // Only change shared application state after the whole file succeeds.
         vocabulary.mergeFrom(stagedVocabulary);
 

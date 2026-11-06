@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sentence Builder JavaFX file import screen.
+  Written by Jinesh Patel for CS4485.0W1 Senior Design, Team 25,
+  starting October 9, 2026. NetID: JAP220022.
+  Progress and cancellation stay on this screen while a worker processes the file.
+-->
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -35,6 +41,7 @@
 
     <Label fx:id="validationLabel" wrapText="true"/>
 
+    <!-- Progress stays visible so users can follow longer imports. -->
     <HBox alignment="CENTER_LEFT" spacing="8.0">
         <Button fx:id="analyzeButton"
                 text="_Import File"

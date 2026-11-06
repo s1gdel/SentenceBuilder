@@ -59,6 +59,8 @@ public class Vocabulary {
 
     /**
      * Merges a successfully staged import into this vocabulary.
+     * Added for Jinesh Patel's background import integration on
+     * October 23, 2026.
      * Keeping imported counts separate until completion prevents a cancelled
      * file from leaving partially learned application state behind.
      *
@@ -67,6 +69,8 @@ public class Vocabulary {
     void mergeFrom(Vocabulary importedVocabulary) {
         Objects.requireNonNull(importedVocabulary, "importedVocabulary");
 
+        // Accumulate completed import counts rather than replacing data from
+        // files already learned during this application session.
         for (Word importedWord : importedVocabulary.wordsByText.values()) {
             Word targetWord = getOrCreateWord(importedWord.getText());
             targetWord.addCounts(
@@ -75,6 +79,8 @@ public class Vocabulary {
                     importedWord.getSentenceEndCount());
         }
 
+        // Only completed imports reach this merge, so cancelled reads cannot
+        // leave some follower pairs behind while others are missing.
         for (Map.Entry<String, Map<String, Integer>> wordEntry
                 : importedVocabulary.followerCounts.entrySet()) {
             Map<String, Integer> targetFollowers = followerCounts.computeIfAbsent(
@@ -155,6 +161,20 @@ public class Vocabulary {
         Word chosenWord = getOrCreateWord(chosen);
         chosenWord.recordOccurrence();
         recordFollower(previous, chosen);
+    }
+
+    /**
+     * Adds an unfamiliar user-confirmed word without inventing a follower pair.
+     * A word already known is left unchanged because the UI records only new
+     * standalone words through this method.
+     *
+     * @param wordText confirmed word typed by the user
+     */
+    public void addUserWord(String wordText) {
+        String normalized = normalizeRequired(wordText, "wordText");
+        if (!wordsByText.containsKey(normalized)) {
+            getOrCreateWord(normalized).recordOccurrence();
+        }
     }
 
     /**
